@@ -1,105 +1,239 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { createUrl } from '@/lib/api/urls'
+import { useState } from "react";
+import { createUrl } from "@/lib/api/urls";
 
 export default function UrlShortenerForm() {
-  const [url, setUrl] = useState('')
-  const [customAlias, setCustomAlias] = useState('')
-  const [shortUrl, setShortUrl] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [copied, setCopied] = useState(false)
-  const [showAlias, setShowAlias] = useState(false)
+  const [url, setUrl] = useState("");
+  const [customAlias, setCustomAlias] = useState("");
+  const [shortUrl, setShortUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [showAlias, setShowAlias] = useState(false);
 
   const handleShorten = async () => {
-    if (!url.trim()) return
-    setLoading(true)
-    setError('')
-    setShortUrl('')
+    console.log('Button clicked')
+    if (!url.trim()) return;
+
+    setLoading(true);
+    setError("");
+    setShortUrl("");
 
     try {
-      const res = await createUrl(url.trim(), customAlias.trim() || undefined)
-      setShortUrl(res.data.shortUrl)
+      const res = await createUrl(url.trim(), customAlias.trim() || undefined);
+
+      setShortUrl(res.data.shortUrl);
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : 'Something went wrong. Try again.'
-      setError(message)
+        err instanceof Error ? err.message : "Something went wrong. Try again.";
+
+      setError(message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(shortUrl)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+    navigator.clipboard.writeText(shortUrl);
+    setCopied(true);
+
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+  };
 
   return (
-    <div className="w-full flex flex-col gap-4">
-      {/* Premium Input Card */}
-      <div className="w-full rounded-3xl p-6 md:p-8 flex flex-col gap-4 shadow-xl dark:shadow-2xl bg-white border border-zinc-200 dark:bg-zinc-900/50 dark:border-zinc-800 backdrop-blur-xl transition-all">
-        <div className="flex flex-col sm:flex-row gap-3 w-full">
-          <input
-            type="url"
-            placeholder="Paste your long URL here..."
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleShorten()}
-            className="flex-1 min-w-0 h-12 px-4 text-sm rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 dark:bg-zinc-950/50 dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-300 dark:focus:ring-zinc-300 transition-all"
-          />
-          <button
-            onClick={handleShorten}
-            disabled={loading || !url.trim()}
-            className="h-12 px-6 text-sm font-semibold rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] shrink-0"
-          >
-            {loading ? "Shortening..." : "Shorten URL"}
-          </button>
-        </div>
-        
+    <div
+      style={{
+        width: "100%",
+        background: "var(--color-surface-card)",
+        border: "1px solid var(--color-hairline)",
+        borderRadius: "16px",
+        padding: "24px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          gap: "8px",
+        }}
+      >
+        <input
+          type="url"
+          placeholder="Paste your long URL here..."
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleShorten()}
+          style={{
+            flex: 1,
+            height: "44px",
+            padding: "0 14px",
+            fontSize: "14px",
+            border: "1px solid var(--color-hairline)",
+            borderRadius: "8px",
+            background: "var(--color-canvas)",
+            color: "var(--color-ink)",
+            outline: "none",
+          }}
+        />
+
         <button
-          onClick={() => setShowAlias(!showAlias)}
-          className="self-start text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+          onClick={handleShorten}
+          disabled={loading || !url.trim()}
+          style={{
+            height: "44px",
+            padding: "0 20px",
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "var(--color-on-primary)",
+            background:
+              loading || !url.trim()
+                ? "var(--color-muted)"
+                : "var(--color-primary)",
+            border: "none",
+            borderRadius: "8px",
+            cursor: loading || !url.trim() ? "not-allowed" : "pointer",
+            whiteSpace: "nowrap",
+          }}
         >
-          {showAlias ? "− Hide custom alias" : "+ Add custom alias (optional)"}
+          {loading ? "Shortening..." : "Shorten URL"}
         </button>
-        
-        {showAlias && (
-          <input
-            type="text"
-            placeholder="e.g. my-link (letters and numbers only)"
-            value={customAlias}
-            onChange={(e) => setCustomAlias(e.target.value)}
-            className="h-12 w-full px-4 text-sm rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 dark:bg-zinc-950/50 dark:border-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-300 dark:focus:ring-zinc-300 transition-all animate-in fade-in slide-in-from-top-2"
-          />
-        )}
-        
-        {error && <p className="text-sm font-medium text-red-500 mt-1">{error}</p>}
       </div>
 
-      {/* Premium Result Card Section */}
+      <button
+        onClick={() => setShowAlias(!showAlias)}
+        style={{
+          alignSelf: "flex-start",
+          fontSize: "13px",
+          fontWeight: 500,
+          color: "var(--color-muted)",
+          background: "var(--color-canvas)",
+          border: "1px solid var(--color-hairline)",
+          borderRadius: "999px",
+          padding: "8px 14px",
+          cursor: "pointer",
+          transition: "all 0.15s ease",
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+        }}
+      >
+        <span
+          style={{
+            fontSize: "16px",
+            lineHeight: 1,
+            fontWeight: 600,
+          }}
+        >
+          {showAlias ? "−" : "+"}
+        </span>
+
+        {showAlias ? "Hide custom alias" : "Add custom alias"}
+      </button>
+
+      <div
+        style={{
+          maxHeight: showAlias ? "60px" : "0px",
+          opacity: showAlias ? 1 : 0,
+          overflow: "hidden",
+          transition: "all 250ms cubic-bezier(0.4, 0, 0.2, 1)",
+        }}
+      >
+        <input
+          type="text"
+          placeholder="e.g. my-link"
+          value={customAlias}
+          onChange={(e) => setCustomAlias(e.target.value)}
+          style={{
+            width: "100%",
+            height: "44px",
+            padding: "0 14px",
+            fontSize: "14px",
+            border: "1px solid var(--color-hairline)",
+            borderRadius: "8px",
+            background: "var(--color-canvas)",
+            color: "var(--color-ink)",
+            outline: "none",
+            marginTop: "8px",
+          }}
+        />
+      </div>
+
+      {error && (
+        <p
+          style={{
+            fontSize: "13px",
+            color: "var(--color-error)",
+            margin: 0,
+          }}
+        >
+          {error}
+        </p>
+      )}
+
       {shortUrl && (
-        <div className="w-full bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 rounded-2xl px-5 py-4 flex items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <div className="min-w-0">
-            <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">Your short link</p>
+        <div
+          style={{
+            width: "100%",
+            background: "var(--color-canvas)",
+            border: "1px solid var(--color-hairline)",
+            borderRadius: "12px",
+            padding: "16px 20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "16px",
+          }}
+        >
+          <div>
+            <p
+              style={{
+                fontSize: "12px",
+                color: "var(--color-muted)",
+                margin: "0 0 4px 0",
+              }}
+            >
+              Your short link
+            </p>
+
             <a
               href={shortUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline truncate block"
+              style={{
+                fontSize: "15px",
+                fontWeight: 500,
+                color: "var(--color-accent)",
+                textDecoration: "none",
+              }}
             >
               {shortUrl}
             </a>
           </div>
+
           <button
             onClick={handleCopy}
-            className="shrink-0 h-10 px-5 text-xs font-bold uppercase tracking-wider rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all active:scale-[0.95]"
+            style={{
+              height: "36px",
+              padding: "0 16px",
+              fontSize: "13px",
+              fontWeight: 600,
+              color: copied ? "var(--color-success)" : "var(--color-ink)",
+              background: "var(--color-surface-card)",
+              border: "1px solid var(--color-hairline)",
+              borderRadius: "8px",
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+            }}
           >
-            {copied ? "Copied!" : "Copy"}
+            {copied ? "✓ Copied" : "Copy"}
           </button>
         </div>
       )}
     </div>
-  )
+  );
 }
