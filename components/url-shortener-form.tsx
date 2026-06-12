@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createUrl } from "@/lib/api/urls";
+import { createPublicUrl } from '@/lib/api/urls'
 
 export default function UrlShortenerForm() {
   const [url, setUrl] = useState("");
@@ -21,7 +21,7 @@ export default function UrlShortenerForm() {
     setShortUrl("");
 
     try {
-      const res = await createUrl(url.trim(), customAlias.trim() || undefined);
+      const res = await createPublicUrl(url.trim(), customAlias.trim() || undefined)
 
       setShortUrl(res.data.shortUrl);
     } catch (err: unknown) {

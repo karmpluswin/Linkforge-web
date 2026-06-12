@@ -19,3 +19,8 @@ export const updateUrl = async (id: string, data: { isActive?: boolean; customAl
   const res = await client.patch(`/api/v1/urls/${id}`, data)
   return res.data
 }
+
+export const createPublicUrl = async (originalUrl: string, customAlias?: string) => {
+  const res = await client.post('/api/v1/urls/public', { originalUrl, customAlias })
+  return res.data
+}

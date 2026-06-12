@@ -22,8 +22,14 @@ client.interceptors.request.use((config) => {
 client.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
+    if (
+      error.response?.status === 401 &&
+      typeof window !== 'undefined' &&
+      !window.location.pathname.includes('/login') &&
+      !window.location.pathname.includes('/register')
+    ) {
+      const isPublicRoute = error.config?.url?.includes('/public')
+      if (!isPublicRoute) {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         window.location.href = '/login'
