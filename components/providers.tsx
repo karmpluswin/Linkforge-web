@@ -10,7 +10,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       enableSystem
       disableTransitionOnChange={false}
     >
-      {children}
+        {children}
     </ThemeProvider>
   )
 }
