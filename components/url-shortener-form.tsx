@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createPublicUrl } from '@/lib/api/urls'
+import { createPublicUrl } from "@/lib/api/urls";
 
 export default function UrlShortenerForm() {
   const [url, setUrl] = useState("");
@@ -13,7 +13,7 @@ export default function UrlShortenerForm() {
   const [showAlias, setShowAlias] = useState(false);
 
   const handleShorten = async () => {
-    console.log('Button clicked')
+    console.log("Button clicked");
     if (!url.trim()) return;
 
     setLoading(true);
@@ -21,7 +21,10 @@ export default function UrlShortenerForm() {
     setShortUrl("");
 
     try {
-      const res = await createPublicUrl(url.trim(), customAlias.trim() || undefined)
+      const res = await createPublicUrl(
+        url.trim(),
+        customAlias.trim() || undefined,
+      );
 
       setShortUrl(res.data.shortUrl);
     } catch (err: unknown) {
@@ -50,15 +53,17 @@ export default function UrlShortenerForm() {
         background: "var(--color-surface-card)",
         border: "1px solid var(--color-hairline)",
         borderRadius: "16px",
-        padding: "24px",
+        padding: "clamp(16px, 4vw, 24px)",
         display: "flex",
         flexDirection: "column",
         gap: "12px",
+        margin: "0px 12px"
       }}
     >
       <div
         style={{
           display: "flex",
+          flexWrap: "wrap",
           gap: "8px",
         }}
       >
@@ -72,6 +77,8 @@ export default function UrlShortenerForm() {
             flex: 1,
             height: "44px",
             padding: "0 14px",
+            width: "100%",
+            minWidth: "0",
             fontSize: "14px",
             border: "1px solid var(--color-hairline)",
             borderRadius: "8px",
@@ -88,6 +95,7 @@ export default function UrlShortenerForm() {
             height: "44px",
             padding: "0 20px",
             fontSize: "14px",
+            minWidth: "160px",
             fontWeight: 600,
             color: "var(--color-on-primary)",
             background:
@@ -184,7 +192,8 @@ export default function UrlShortenerForm() {
             borderRadius: "12px",
             padding: "16px 20px",
             display: "flex",
-            alignItems: "center",
+            flexWrap: "wrap",
+            alignItems: "flex-start",
             justifyContent: "space-between",
             gap: "16px",
           }}
@@ -209,6 +218,7 @@ export default function UrlShortenerForm() {
                 fontWeight: 500,
                 color: "var(--color-accent)",
                 textDecoration: "none",
+                wordBreak: "break-all",
               }}
             >
               {shortUrl}
